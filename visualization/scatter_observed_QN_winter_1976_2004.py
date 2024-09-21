@@ -21,8 +21,11 @@ import discharge_isolines
 fp = '/home/tcarrasco/result/data/floods/obs_QN_ERA5_1976_2004.nc'
 ds = xr.open_dataset(fp)
 
-pr = ds['pr']
-H0 = ds['H0']
+pr = ds['pr'].sel(time=slice('1976-01-01', '2004-12-31'))
+H0 = ds['H0'].sel(time=slice('1976-01-01', '2004-12-31'))
+
+pr = pr.where(pr.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
+H0 = H0.where(H0.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
 
 # filter data with pr > 3mm
 H0 = H0.where(pr > 3, drop=True)

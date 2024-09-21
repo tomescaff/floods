@@ -25,8 +25,11 @@ import discharge_isolines
 fp = '/home/tcarrasco/result/data/floods/obs_QN_ERA5_1976_2004.nc'
 ds = xr.open_dataset(fp)
 
-pr = ds['pr']
-H0 = ds['H0']
+pr = ds['pr'].sel(time=slice('1976-01-01', '2004-12-31'))
+H0 = ds['H0'].sel(time=slice('1976-01-01', '2004-12-31'))
+
+pr = pr.where(pr.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
+H0 = H0.where(H0.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
 
 # filter data with pr > 3mm
 H0 = H0.where(pr > 3, drop=True)
@@ -74,12 +77,12 @@ bins = np.arange(3,120,3)
 plt.hist(pr, bins=bins, density=True, fc='grey', ec='k', # type: ignore
          alpha=0.65) 
 plt.xlim(0, 120)
-plt.ylim(0, 0.08)
+plt.ylim(0, 0.1)
 plt.grid(ls='--', lw=0.4, c='grey')
 plt.tick_params(axis="both", direction="in")
 plt.gca().set_xticklabels([])
 plt.ylabel('PDF')
-plt.yticks([0, 4e-2, 8e-2], ['0', '4e-2', '8e-2'])
+plt.yticks([0, 5e-2, 1e-1], ['0', '5e-2', '1e-1'])
 plt.legend(['Gamma fit', 'Data'])
 
 ax_h0dist = fig.add_subplot(gs[1:, -1])
