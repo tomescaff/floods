@@ -175,4 +175,7 @@ plt.ylabel('Frequency')
 plt.legend(['Model', 'Bias corrected', 'OBS'])
 
 plt.tight_layout()
-plt.savefig('stats_QN_daily_precip.png', dpi=300)
+
+bd = '/home/tcarrasco/result/images/floods/'
+fn = 'stats_QN_daily_precip.png'
+plt.savefig(bd + fn, format='png', dpi=500)
