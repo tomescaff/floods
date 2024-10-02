@@ -21,20 +21,19 @@ xbins = np.arange(0, 350, 0.5)
 x = xbins[xbins>minval]
 
 # read observed data at Quinta Normal station
-df = pd.read_csv('QN_daily_precip.csv', 
-                 parse_dates={'time': ['agno', ' mes', ' dia']}, )
-df = df.set_index('time')
-da = df[' valor'].to_xarray()
-da = da.sel(time=slice('1976-01-01', '2004-12-31'))
-obs_full = da.where(da.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
+fp = '/home/tcarrasco/result/data/floods/obs_QN_ERA5_1976_2004.nc'
+ds = xr.open_dataset(fp)
+pr = ds['pr'].sel(time=slice('1979-01-01', '2004-12-31'))
+obs_full = pr.where(pr.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
 obs_filt = obs_full.where(obs_full > minval, drop=True)
 
-# read modeled data from CMIP6
-ds = xr.open_dataset('iso0C_data_H0_v1.nc')
-da = ds['pr']
-da = da.sel(time=slice('1976-01-01', '2004-12-31'))
-da = da.where(da.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
-mod_full = da[0,:] # model 0
+# read modeled data from CMIP5
+fp = '/home/tcarrasco/result/data/floods/mod_QN_CMIP5_1976_2004.nc'
+ds = xr.open_dataset(fp)
+ds = ds.sel(time=slice('1976-01-01', '2004-12-31'))
+ds = ds.where(ds.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
+pr = ds['pr'].isel(model=0)
+mod_full = pr.where(pr.time.dt.month.isin([5, 6, 7, 8, 9]), drop=True)
 mod_filt = mod_full.where(mod_full > minval, drop=True)
 
 # plot data
@@ -137,7 +136,7 @@ mod_filt_corrected_annual = mod_filt_corrected_annual.mean('time')
 obs_filt_annual = obs_filt.resample(time='1YS').mean('time')
 plt.plot(time, mod_filt_annual, c='k')
 plt.plot(time, mod_filt_corrected_annual, c='green')
-plt.plot(time, obs_filt_annual, c='red')
+plt.plot(obs_filt_annual.time.dt.year, obs_filt_annual, c='red')
 plt.xlabel('Time')
 plt.ylabel('Annual mean precipitation [wet days only (>3mm)] (mm/day) ')
 plt.legend(['Model', 'Bias corrected', 'OBS'])
