@@ -119,15 +119,15 @@ for model in models:
     cdf = quantile_mapping.cdf_fun_precip_drywet
     invcdf = quantile_mapping.invcdf_fun_precip_drywet
     
-    ev_hist = invcdf(0.9, pr_hist_corrected, minval)
-    ev_future = invcdf(0.9, pr_future_corrected, minval)
+    ev_hist = invcdf(0.99, pr_hist_corrected, minval)
+    ev_future = invcdf(0.99, pr_future_corrected, minval)
     
     print(model, 'EV hist - Future', int(ev_hist), int(ev_future))
     
-    tau_ev_hist = 1/(1-cdf(60, pr_hist_corrected, minval))
-    tau_ev_future = 1/(1-cdf(60, pr_future_corrected, minval))
+    tau_ev_hist = 1/(1-cdf(35, pr_hist_corrected, minval))
+    tau_ev_future = 1/(1-cdf(35, pr_future_corrected, minval))
     
-    print(model, 'TAU 60mm hist - Future', int(tau_ev_hist), 
+    print(model, 'TAU 35mm hist - Future', int(tau_ev_hist), 
           int(tau_ev_future))
     
     
